@@ -1,7 +1,7 @@
 #coding=utf-8
 
-import urllib,urllib2,re,os,json,gevent,traceback
-from BeautifulSoup import BeautifulSoup
+import urllib,urllib2,re,os,json,gevent,traceback	#json是数据交换语言。
+from BeautifulSoup import BeautifulSoup		#HTML
 from gevent import monkey
 
 monkey.patch_all()
@@ -16,10 +16,11 @@ BAIDUVERIFY=''
 
 def crawlList():
 	artistUrl=rootUrl+'/artist/'+str(artistId)
-	homeHtml=request(artistUrl)
-	soup=BeautifulSoup(homeHtml)
+	homeHtml=request(artistUrl)	#请求目标服务器，生成一个类
+	soup=BeautifulSoup(homeHtml)	 # html为html源代码字符串，type(html) == str
+	
 	try:
-		pagecount=len(soup.findAll("div",{"class":"page-inner"})[1].findAll(text=re.compile(r'\d+')))
+		pagecount=len(soup.findAll("div",{"class":"page-inner"})[1].findAll(text=re.compile(r'\d+')))	#以当前节点为起点，搜索整个子数，后返回；re中，\d表示数字0-9，findALL()用于找出字符串中的数字，而split('\d+')用于去掉字符串中的数字
 	except:
 		print traceback.print_exc()
 		print homeHtml
@@ -28,7 +29,7 @@ def crawlList():
 	listPath=savePath+listDir
 	if not os.path.exists(listPath):
 		os.mkdir(listPath)
-	for i in range(pagecount):
+	for i in range(pagecount):	#0～～pagecount-1.
 		jobs.append(gevent.spawn(crawlPage,i))
 	gevent.joinall(jobs)
 		
@@ -85,7 +86,7 @@ def crawlAlbum(pagePath,albumUrl,title):
 			musicPage=rootUrl+link['href']
 			albumFile.write('%s\t%s\t%s\n' % (musicPage,link['title'],path)) #真实下载地址会过期，这里保存下载页面
 		except:
-			print traceback.print_exc()
+			print traceback.print_exc()	#获取异常相关的数据都是通过sys.exc_info()函数得到的
 	albumFile.close()
 
 def crawlDownloadUrl(musicPage):
