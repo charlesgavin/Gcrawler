@@ -9,7 +9,7 @@ import threading
 import gevent
 from gevent import monkey, queue
 
-monkey.patch_all()
+gevent.monkey.patch_all()
 
 import urllib2
 import logging
